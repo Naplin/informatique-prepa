@@ -1,6 +1,9 @@
 from collections import deque
+import os
 from math import inf
-from util_files import *
+from os.path import join
+import util_files
+import util_files_priorite
 
 # Outils conversion liste d'adjacence - matrice d'adjacence
 def matrice_vers_liste(m):
@@ -59,7 +62,7 @@ def parcours_largeur(g, s):
     n = len(g)
     deja_enfile = [False] * n
     deja_enfile[s] = True
-    while not est_vide_file(file):
+    while not util_files.est_vide_file(file):
         x = file.pop()
         for y in g[x]:
             if not deja_enfile[y]:
@@ -75,7 +78,7 @@ def distance(g, s):
     distance = [inf] * n
     distance[s] = 0
 
-    while not est_vide_file(file):
+    while not util_files.est_vide_file(file):
         x = file.pop()
         for y in g[x]:
             if distance[y] == inf:
@@ -138,7 +141,9 @@ def correction_arc(l):
     return int(l[:a]), int(l[a:b]), float(l[b:])
 
 def lire_graphe(filename):
-    file = open(filename, 'r')
+    dir = os.path.dirname(__file__)
+    fname = join(join(dir, 'fichiers_graphes/'), filename)
+    file = open(fname, 'r')
     l0 = file.readline()
     n, _ = correction_nb(l0)
     g = [[] for _ in range(n)]
@@ -150,3 +155,37 @@ def lire_graphe(filename):
 small = lire_graphe('small.gr')
 medium = lire_graphe('medium.gr')
 large = lire_graphe('large.gr')
+
+# Algo Dijsktra
+
+def dijkstra(g, s):
+    n = len(g)
+    dist = [inf] * n
+    file = util_files_priorite.creer_file() 
+    dist[s] = 0
+    util_files_priorite.ajouter(file, 0, s)
+    while not(util_files_priorite.est_vide(file)):
+        x = util_files_priorite.retirer(file)
+        for y, p in g[x]:
+            if dist[x] + p < dist[y]:
+                dist[y] = dist[x] + p
+                util_files_priorite.ajouter(file, dist[y], y)
+    return dist
+
+def plus_court_chemin(g, a, b):
+    n = len(g)
+    dist = [inf] * n
+    pred = [[] for _ in range(n)]
+    file = util_files_priorite.creer_file()
+    dist[a] = 0
+    util_files_priorite.ajouter(file, 0, a)
+    while not(util_files_priorite.est_vide(file)):
+        x = util_files_priorite.retirer(file)
+        for y, p in g[x]:
+            if dist[x] + p < dist[y]:
+                pred[y] = pred[x] + [x]
+                dist[y] = dist[x] + p
+                util_files_priorite.ajouter(file, dist[y], y)
+    return pred[b]
+
+

@@ -21,5 +21,3 @@ def comparer_temps_fonctions(fonctions, *args, generate=liste_random, n=1000):
         plt.plot(sizes, times, label=f.__name__)
         plt.legend()
     plt.show()
-
-comparer_temps_fonctions([tri_rapide, tri_fusion], n=10000)

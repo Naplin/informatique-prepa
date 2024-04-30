@@ -2,6 +2,7 @@ small = open('small.gr', 'r')
 medium = open('medium.gr', 'r')
 large = open('large.gr', 'r')
 
+# Questions préliminaires
 def ligne_to_nb_sommets_aretes(l):
     s = ""
     n = 0
